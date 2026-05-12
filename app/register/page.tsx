@@ -1,35 +1,41 @@
 "use client";
-import Form from 'next/form';
-import { handleSubmit } from './actions';
-import { useActionState } from 'react';
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { useCreateUserWithEmailAndPassword, useSendEmailVerification } from 'react-firebase-hooks/auth';
+import { auth } from '../../firebase/firebase.config';
 
 export default function Register() {
 
-    const [error, action, state] = useActionState(handleSubmit, "");
-    
+    const router = useRouter();
+    const [createUser] = useCreateUserWithEmailAndPassword(auth);
+    const [sendEmailVerification] = useSendEmailVerification(auth);
+
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+
+    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        await createUser(email, password);
+        await sendEmailVerification();
+        router.push('/login');
+    };
+
     return (
     <>
         <div className="hero bg-base-200 min-h-screen">
                 <div className="card bg-base-100 w-full max-w-sm shrink-0 shadow-2xl">
-                    <Form className="card-body" action={action}>
+                    <form className="card-body" onSubmit={handleSubmit}>
                         <fieldset className="fieldset">
-                            <label className="label">Nombre y apellidos</label>
-                            <input type="text" className="input" placeholder="Nombre y apellidos" id='fullname' name='fullname'/>
                             <label className="label">Correo electrónico</label>
-                            <input type="email" className="input" placeholder="Email" id='email' name='email'/>
+                            <input type="email" className="input" placeholder="Email" id='email' name='email' value={email} onChange={(e) => setEmail(e.target.value)}/>
                             <label className="label">Contraseña</label>
-                            <input type="password" className="input" placeholder="Contraseña" id='password' name='password'/>
-                            {state == true ? (
-                                <button className="btn btn-neutral mt-4" disabled>
-                                    Registrando...
-                                </button>
-                            ) : (
+                            <input type="password" className="input" placeholder="Contraseña" id='password' name='password' value={password} onChange={(e) => setPassword(e.target.value)}/>
+
                                 <button className="btn btn-primary mt-4">
                                     Registrarse
                                 </button>
-                            )}
                         </fieldset>
-                    </Form>
+                    </form>
                 </div>
             </div>
     </>

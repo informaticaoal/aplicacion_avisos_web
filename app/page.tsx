@@ -7,7 +7,7 @@ export default function Index() {
 
   return (
     <>
-      {isLoggedIn ? <Home /> : <Login />}
+      <Login />
     </>
   );
 }

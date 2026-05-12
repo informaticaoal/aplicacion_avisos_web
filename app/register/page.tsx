@@ -2,24 +2,32 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import {
+    useAuthState,
   useCreateUserWithEmailAndPassword,
   useSendEmailVerification,
 } from 'react-firebase-hooks/auth';
 import { auth } from '../../firebase/firebase.config';
 
 export default function Register() {
-  const router = useRouter();
-  const [createUser] = useCreateUserWithEmailAndPassword(auth);
-  const [sendEmailVerification] = useSendEmailVerification(auth);
-
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+    const router = useRouter();
+    const [createUser] = useCreateUserWithEmailAndPassword(auth);
+    const [sendEmailVerification] = useSendEmailVerification(auth);
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    await createUser(email, password);
+    try {
+        const userCredential = await createUser(email, password);
+        if (userCredential) {
+            const userEmail = userCredential.user.email;
+            console.log('Usuario creado con UID:', userEmail);
+        }
+    } catch (error) {
+        console.error('Error al crear el usuario:', error);
+    }
     await sendEmailVerification();
-    router.push('/login');
+    // router.push('/login');
   };
 
   return (

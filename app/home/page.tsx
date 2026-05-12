@@ -17,7 +17,7 @@ export default function Home() {
           <h1 className="text-3xl font-bold mb-4">Bienvenid@ a la Aplicación de Avisos</h1>
           <p className="text-lg">
             ¡Hola, {user?.email}!{' '}
-            {new Date().getHours() > 12
+            {new Date().getHours() >= 12
               ? '¿Cómo te está yendo la tarde?'
               : '¡Con buena energía por la mañana!'}{' '}
           </p>

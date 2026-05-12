@@ -3,9 +3,15 @@ import { SignedIn } from '../signed-in';
 import { SignedOut } from '../signed-out';
 import { useSignOut } from 'react-firebase-hooks/auth';
 import { auth } from '@/firebase/firebase.config';
+import { redirect } from 'next/navigation';
 
 export default function Navbar() {
   const [signOut] = useSignOut(auth);
+
+  function getSignOut() {
+    signOut();
+    redirect('/login');
+  }
 
   return (
     <nav className="navbar bg-blue-50 shadow-sm">
@@ -18,7 +24,7 @@ export default function Navbar() {
       </div>
       <SignedIn>
         <div className="mr-10">
-          <button className="btn btn-ghost px-4 py-2" onClick={signOut}>
+          <button className="btn btn-ghost px-4 py-2" onClick={getSignOut}>
             Cerrar sesión
           </button>
         </div>

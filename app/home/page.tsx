@@ -1,14 +1,27 @@
+'use client';
+import { useAuthState, useSignOut } from 'react-firebase-hooks/auth';
+import { SignedIn } from '../components/signed-in';
+import { SignedOut } from '../components/signed-out';
+import { auth } from '@/firebase/firebase.config';
+
 export default function Home() {
-    return (
-        <>
-        <div className="hero bg-base-200 min-h-screen">
-            <div className="hero-content text-center">
-                <div className="max-w-md">
-                    <h1 className="text-5xl font-bold">Bienvenido a mi aplicación</h1>
-                    <p className="py-6">Esta es una aplicación de ejemplo creada con Next.js y Tailwind CSS.</p>
-                </div>
-            </div>
+  const [user] = useAuthState(auth);
+  const [signOut] = useSignOut(auth);
+  return (
+    <>
+      <div className="navbar bg-base-100 shadow-sm">
+        <div className="flex-1">
+          <h2 className="text-xl ml-10 font-bold text-primary">
+            Aplicación de Avisos <span>O</span>
+            <span>A</span>L
+          </h2>
         </div>
-        </>
-    );
+        <SignedIn>
+          <div className="flex-none">
+            <button className="btn btn-square btn-ghost"></button>
+          </div>
+        </SignedIn>
+      </div>
+    </>
+  );
 }

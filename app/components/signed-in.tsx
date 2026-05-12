@@ -1,20 +1,16 @@
-import { auth } from "@/firebase/firebase.config";
-import { ReactNode } from "react";
-import { useAuthState } from "react-firebase-hooks/auth";
+import { auth } from '@/firebase/firebase.config';
+import { ReactNode } from 'react';
+import { useAuthState } from 'react-firebase-hooks/auth';
 
 type Props = {
-    children: ReactNode;
+  children: ReactNode;
 };
 
-export const SignedIn = ({children}: Props) => {
-    const [user] = useAuthState(auth);
+export const SignedIn = ({ children }: Props) => {
+  const [user] = useAuthState(auth);
 
-    if (!user) {
-        return null;
-    }
-    return (
-        <>
-            {children}
-        </>
-    );
-}
+  if (!user) {
+    return null;
+  }
+  return <>{children}</>;
+};

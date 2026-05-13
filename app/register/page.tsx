@@ -2,32 +2,55 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import {
-    useAuthState,
   useCreateUserWithEmailAndPassword,
   useSendEmailVerification,
 } from 'react-firebase-hooks/auth';
 import { auth } from '../../firebase/firebase.config';
+import { addDoc, collection, getFirestore } from 'firebase/firestore';
 
 export default function Register() {
-    const router = useRouter();
-    const [createUser] = useCreateUserWithEmailAndPassword(auth);
-    const [sendEmailVerification] = useSendEmailVerification(auth);
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
+  const db = getFirestore();
+
+  const router = useRouter();
+
+  const [createUser] = useCreateUserWithEmailAndPassword(auth);
+
+  const [sendEmailVerification] = useSendEmailVerification(auth);
+
+  const [email, setEmail] = useState('');
+
+  const [password, setPassword] = useState('');
+
+  const [sendingData, setSendingData] = useState(false);
+
+  async function addData(dataEmail: string | null) {
+    try {
+      const docRef = await addDoc(collection(db, 'usuarios'), {
+        email: dataEmail,
+        role: 'user',
+      });
+      console.log("Usuario agregado con ID: ", docRef.id);
+    } catch (error) {
+      console.error("Error al agregar el usuario en la base de datos: ", error);
+    }
+  }
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
+      setSendingData(true);
         const userCredential = await createUser(email, password);
         if (userCredential) {
             const userEmail = userCredential.user.email;
-            console.log('Usuario creado con UID:', userEmail);
+            addData(userEmail);
         }
     } catch (error) {
         console.error('Error al crear el usuario:', error);
+    } finally {
+      await sendEmailVerification();
+      setSendingData(false);
+      router.push('/login');
     }
-    await sendEmailVerification();
-    // router.push('/login');
   };
 
   return (
@@ -57,7 +80,15 @@ export default function Register() {
                 onChange={(e) => setPassword(e.target.value)}
               />
 
-              <button className="btn btn-primary mt-4">Registrarse</button>
+              {sendingData ? (
+                <button className="btn btn-primary text-white mt-5" disabled>
+                  Registrando...
+                </button>
+              ) : (
+                <button type="submit" className="btn btn-primary text-white mt-5">
+                  Registrarse
+                </button>
+              )}
             </fieldset>
           </form>
         </div>

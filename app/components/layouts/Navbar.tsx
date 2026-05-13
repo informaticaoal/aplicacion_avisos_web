@@ -16,11 +16,11 @@ export default function Navbar() {
   return (
     <nav className="navbar bg-blue-50 shadow-sm">
       <div className="flex-1">
-        <h2 className="text-xl ml-10 font-bold text-primary">
+        <Link href="/" className="text-xl ml-10 font-bold text-primary">
           Aplicación de Avisos <span className="text-neutral">O</span>
           <span className="text-secondary">A</span>
           <span className="text-black">L</span>
-        </h2>
+        </Link>
       </div>
       <SignedIn>
         <div className="mr-10">

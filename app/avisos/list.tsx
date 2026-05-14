@@ -21,7 +21,7 @@ export default function List() {
         try {
             const docRef = await getDocs(collection(db, "avisos"));
             const now = new Date().getTime();
-            const collectedData = docRef.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+            const collectedData: Array<{id: string; [key: string]: any}> = docRef.docs.map(doc => ({ id: doc.id, ...doc.data() }));
             collectedData.forEach(async (aviso) => {
                 console.log(aviso)
                 if (now - aviso.fechaCreacion >= 365 * 24 * 60 * 60 * 1000) { // Si el aviso tiene más de 1 año

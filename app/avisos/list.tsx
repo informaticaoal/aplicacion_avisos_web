@@ -23,7 +23,6 @@ export default function List() {
             const now = new Date().getTime();
             const collectedData: Array<{id: string; [key: string]: any}> = docRef.docs.map(doc => ({ id: doc.id, ...doc.data() }));
             collectedData.forEach(async (aviso) => {
-                console.log(aviso)
                 if (now - aviso.fechaCreacion >= 365 * 24 * 60 * 60 * 1000) { // Si el aviso tiene más de 1 año
                     await deleteDoc(doc(db, "avisos", aviso.id));
                     
@@ -49,7 +48,7 @@ export default function List() {
         <div className="card card-border bg-base-100 w-100 my-2" key={aviso.id}>
             <div className="card-body">
                 <h2 className="card-title">{aviso.descripcion}</h2>
-                <p>Fecha de creación: {new Date(aviso.fechaCreacion).getUTCDate()}/{new Date(aviso.fechaCreacion).getUTCMonth() + 1}/{new Date(aviso.fechaCreacion).getUTCFullYear()}</p>
+                <p>Fecha de creación: {new Date(aviso.fechaCreacion).getUTCDate()}/{new Date(aviso.fechaCreacion).getUTCMonth() + 1}/{new Date(aviso.fechaCreacion).getUTCFullYear()} — {new Date(aviso.fechaCreacion).getUTCHours() >= 10 ? new Date(aviso.fechaCreacion).getUTCHours() : '0' + new Date(aviso.fechaCreacion).getUTCHours()}:{new Date(aviso.fechaCreacion).getUTCMinutes().toString().padStart(2, '0')}</p>
                 <div className="card-actions justify-end">
                 {aviso.nivelUrgencia === "Leve" ? (
                   <button className="btn btn-sm btn-primary">Leve</button>  

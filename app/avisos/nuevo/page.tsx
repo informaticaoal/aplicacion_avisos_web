@@ -30,9 +30,6 @@ export default function NuevoAviso() {
         }),
       });
       const notifData = await notifRes.json();
-      console.log("[OneSignal client response]", notifData);
-
-      console.log("Aviso agregado con ID: ", docRef.id);
     } catch (error) {
       console.error("Error al agregar el aviso o enviar la notificación: ", error);
       throw error;

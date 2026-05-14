@@ -12,12 +12,17 @@ export default function Login() {
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [user, loading] = useAuthState(auth);
+  const [user] = useAuthState(auth);
+  const [errorLogin, setErrorLogin] = useState<Boolean>(false);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    await signInUserWithEmailAndPassword(email, password);
-    router.push('/home');
+    const result = await signInUserWithEmailAndPassword(email, password);
+    if (result) {
+      router.push('/home');
+    } else {
+      setErrorLogin(true);
+    }
   };
 
   return (
@@ -52,6 +57,11 @@ export default function Login() {
               {user?.emailVerified === false && (
                 <p className="text-red-500 mt-2">
                   Por favor, verifica tu correo electrónico antes de iniciar sesión.
+                </p>
+              )}
+              {errorLogin && (
+                <p className="text-red-500 mt-2">
+                  Error al iniciar sesión. Por favor, verifica tus credenciales.
                 </p>
               )}
               <div className="card-actions mt-3 justify-center">

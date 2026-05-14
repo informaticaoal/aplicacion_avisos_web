@@ -41,6 +41,5 @@ export async function POST(req: Request) {
   });
 
   const data = await response.json();
-  console.log("[OneSignal response]", JSON.stringify(data));
   return NextResponse.json(data, { status: response.status });
 }

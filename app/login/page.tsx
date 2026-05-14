@@ -12,7 +12,7 @@ export default function Login() {
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [user, loading] = useAuthState(auth);
+  const [user] = useAuthState(auth);
   const [errorLogin, setErrorLogin] = useState<Boolean>(false);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {

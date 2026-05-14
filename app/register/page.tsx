@@ -7,6 +7,7 @@ import {
 } from 'react-firebase-hooks/auth';
 import { auth } from '../../firebase/firebase.config';
 import { addDoc, collection, getFirestore } from 'firebase/firestore';
+import Navbar from '../components/layouts/Navbar';
 
 export default function Register() {
   const db = getFirestore();
@@ -25,11 +26,10 @@ export default function Register() {
 
   async function addData(dataEmail: string | null) {
     try {
-      const docRef = await addDoc(collection(db, 'usuarios'), {
+      await addDoc(collection(db, 'usuarios'), {
         email: dataEmail,
         role: 'user',
       });
-      console.log("Usuario agregado con ID: ", docRef.id);
     } catch (error) {
       console.error("Error al agregar el usuario en la base de datos: ", error);
     }
@@ -42,7 +42,7 @@ export default function Register() {
         const userCredential = await createUser(email, password);
         if (userCredential) {
             const userEmail = userCredential.user.email;
-            addData(userEmail);
+            await addData(userEmail);
         }
     } catch (error) {
         console.error('Error al crear el usuario:', error);
@@ -55,6 +55,7 @@ export default function Register() {
 
   return (
     <>
+    <Navbar />
       <div className="hero bg-base-200 min-h-screen">
         <div className="card bg-base-100 w-full max-w-sm shrink-0 shadow-2xl">
           <form className="card-body" onSubmit={handleSubmit}>

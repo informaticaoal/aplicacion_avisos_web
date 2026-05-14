@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation';
 import { useAuthState, useSignInWithEmailAndPassword } from 'react-firebase-hooks/auth';
 import { auth } from '../../firebase/firebase.config';
 import Link from 'next/link';
+import Navbar from '../components/layouts/Navbar';
 
 export default function Login() {
   const router = useRouter();
@@ -21,6 +22,7 @@ export default function Login() {
 
   return (
     <>
+    <Navbar />
       <div className="hero bg-base-200 min-h-screen">
         <div className="card bg-base-100 w-full max-w-sm shrink-0 shadow-2xl">
           <form className="card-body" onSubmit={handleSubmit}>

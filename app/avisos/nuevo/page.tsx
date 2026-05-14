@@ -1,31 +1,51 @@
 'use client';
 import Navbar from "@/app/components/layouts/Navbar";
 import { addDoc, collection, getFirestore } from "firebase/firestore";
-import { useState } from "react";
+import { FormEvent, useState } from "react";
 
 export default function NuevoAviso() {
   const db = getFirestore();
 
   const [sent, setSent] = useState(false);
-  async function addAlert(dataDescription : string, dataCategory : string) {
+
+  async function addAlert(dataDescription: string, dataCategory: string) {
     try {
-      const docRef = await addDoc(collection(db, 'avisos'), {
+      const docRef = await addDoc(collection(db, "avisos"), {
         descripcion: dataDescription,
         nivelUrgencia: dataCategory,
-        fechaCreacion: Math.floor(new Date().getTime() / 1000),
+        fechaCreacion: Math.floor(new Date().getTime()),
         sincronizado: true,
         urlFoto: null,
       });
+
+      const notifRes = await fetch("/api/onesignal", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          heading: "Nuevo aviso",
+          content: dataDescription,
+          urgency: dataCategory,
+        }),
+      });
+      const notifData = await notifRes.json();
+      console.log("[OneSignal client response]", notifData);
+
       console.log("Aviso agregado con ID: ", docRef.id);
     } catch (error) {
-      console.error("Error al agregar el aviso en la base de datos: ", error);
+      console.error("Error al agregar el aviso o enviar la notificación: ", error);
+      throw error;
     }
   }
 
-  const handleSubmit = async (formData: any) => {
-    const dataDescription = formData.get('descripcion');
-    const dataCategory = formData.get('options');
-    addAlert(dataDescription, dataCategory);
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const formData = new FormData(event.currentTarget);
+    const dataDescription = String(formData.get("descripcion") ?? "");
+    const dataCategory = String(formData.get("options") ?? "Normal");
+
+    await addAlert(dataDescription, dataCategory);
     setSent(true);
   };
 
@@ -34,10 +54,10 @@ export default function NuevoAviso() {
       <Navbar />
       <main className="bg-base-100 container mx-auto mt-10">
         <h1 className="text-4xl font-bold mb-10">Creación de avisos</h1>
-        <form action={handleSubmit} className="w-full max-w-lg">
+        <form onSubmit={handleSubmit} className="w-full max-w-lg">
           <div className="flex flex-wrap -mx-3 mb-6">
             <div className="w-full md:w-1/2 px-3">
-              <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="grid-last-name">
+              <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">
                 Descripción del aviso
               </label>
               <textarea placeholder="Detalles del aviso" className="textarea textarea-primary" name="descripcion" onChange={() => {setSent(false)}}></textarea>

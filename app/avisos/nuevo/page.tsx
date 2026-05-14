@@ -13,7 +13,7 @@ export default function NuevoAviso() {
       const docRef = await addDoc(collection(db, "avisos"), {
         descripcion: dataDescription,
         nivelUrgencia: dataCategory,
-        fechaCreacion: Math.floor(new Date().getTime()),
+        fechaCreacion: new Date().getTime(),
         sincronizado: true,
         urlFoto: null,
       });

@@ -74,7 +74,7 @@ export default function List() {
       : (<p>No hay avisos disponibles.</p>)}
       </div>
       {totalPages > 1 && (
-        <div className="join mt-6">
+        <div className="join mt-6 flex justify-center">
           <button
             className="join-item btn"
             onClick={() => setCurrentPage(p => Math.max(p - 1, 1))}

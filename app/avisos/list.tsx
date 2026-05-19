@@ -48,7 +48,7 @@ export default function List() {
         <div className="card card-border bg-base-100 w-100 my-2" key={aviso.id}>
             <div className="card-body">
                 <h2 className="card-title">{aviso.descripcion}</h2>
-                <p>Fecha de creación: {new Date(aviso.fechaCreacion).getUTCDate()}/{new Date(aviso.fechaCreacion).getUTCMonth() + 1}/{new Date(aviso.fechaCreacion).getUTCFullYear()} — {new Date(aviso.fechaCreacion).getUTCHours() >= 10 ? new Date(aviso.fechaCreacion).getUTCHours() : '0' + new Date(aviso.fechaCreacion).getUTCHours()}:{new Date(aviso.fechaCreacion).getUTCMinutes().toString().padStart(2, '0')}</p>
+                <p>Fecha de creación: {new Date(aviso.fechaCreacion).getDate()}/{new Date(aviso.fechaCreacion).getMonth() + 1}/{new Date(aviso.fechaCreacion).getFullYear()} — {new Date(aviso.fechaCreacion).getHours() >= 10 ? new Date(aviso.fechaCreacion).getHours() : '0' + new Date(aviso.fechaCreacion).getHours()}:{new Date(aviso.fechaCreacion).getMinutes().toString().padStart(2, '0')}</p>
                 <div className="card-actions justify-end">
                 {aviso.nivelUrgencia === "Leve" ? (
                   <button className="btn btn-sm btn-primary">Leve</button>  

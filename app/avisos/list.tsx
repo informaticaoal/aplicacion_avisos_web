@@ -5,6 +5,12 @@ export default function List() {
 
     const db = getFirestore();
     const [avisos, setAvisos] = useState<Array<{id: string; [key: string]: any}>>([]);
+    const [currentPage, setCurrentPage] = useState(1);
+    const avisosPerPage = 8;
+
+    const indexOfLastAviso = currentPage * avisosPerPage;
+    const indexOfFirstAviso = indexOfLastAviso - avisosPerPage;
+    const currentAvisos = avisos.slice(indexOfFirstAviso, indexOfLastAviso);
 
     async function fetchAvisos() {
         try {
@@ -40,11 +46,13 @@ export default function List() {
         fetchAvisos();
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
+  const totalPages = Math.ceil(avisos.length / avisosPerPage);
+
   return (
     <>
       <h1 className="text-3xl font-bold mb-5">Listado de Avisos</h1>
       <div className="grid grid-cols-2">
-        {avisos && avisos.length > 0 ? avisos.map(aviso => (
+        {currentAvisos && currentAvisos.length > 0 ? currentAvisos.map(aviso => (
         <div className="card card-border bg-base-100 w-100 my-2" key={aviso.id}>
             <div className="card-body">
                 <h2 className="card-title">{aviso.descripcion}</h2>
@@ -65,6 +73,27 @@ export default function List() {
       ))
       : (<p>No hay avisos disponibles.</p>)}
       </div>
+      {totalPages > 1 && (
+        <div className="join mt-6">
+          <button
+            className="join-item btn"
+            onClick={() => setCurrentPage(p => Math.max(p - 1, 1))}
+            disabled={currentPage === 1}
+          >«</button>
+          {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
+            <button
+              key={page}
+              className={`join-item btn ${currentPage === page ? 'btn-active' : ''}`}
+              onClick={() => setCurrentPage(page)}
+            >{page}</button>
+          ))}
+          <button
+            className="join-item btn"
+            onClick={() => setCurrentPage(p => Math.min(p + 1, totalPages))}
+            disabled={currentPage === totalPages}
+          >»</button>
+        </div>
+      )}
     </>
   );
 }

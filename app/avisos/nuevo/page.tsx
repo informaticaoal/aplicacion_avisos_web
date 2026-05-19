@@ -7,6 +7,7 @@ export default function NuevoAviso() {
   const db = getFirestore();
 
   const [sent, setSent] = useState(false);
+  const [sending, setSending] = useState(false);
 
   async function addAlert(dataDescription: string, dataCategory: string) {
     try {
@@ -18,7 +19,7 @@ export default function NuevoAviso() {
         urlFoto: null,
       });
 
-      const notifRes = await fetch("/api/onesignal", {
+      await fetch("/api/fcm", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -29,7 +30,6 @@ export default function NuevoAviso() {
           urgency: dataCategory,
         }),
       });
-      const notifData = await notifRes.json();
     } catch (error) {
       console.error("Error al agregar el aviso o enviar la notificación: ", error);
       throw error;
@@ -38,12 +38,15 @@ export default function NuevoAviso() {
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    const formData = new FormData(event.currentTarget);
+    const currentForm = event.currentTarget;
+    const formData = new FormData(currentForm);
     const dataDescription = String(formData.get("descripcion") ?? "");
     const dataCategory = String(formData.get("options") ?? "Normal");
-
+    setSending(true);
     await addAlert(dataDescription, dataCategory);
     setSent(true);
+    setSending(false);
+    currentForm.reset();
   };
 
   return (
@@ -57,7 +60,7 @@ export default function NuevoAviso() {
               <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">
                 Descripción del aviso
               </label>
-              <textarea placeholder="Detalles del aviso" className="textarea textarea-primary" name="descripcion" onChange={() => {setSent(false)}}></textarea>
+              <textarea rows={5} placeholder="Detalles del aviso" className="textarea textarea-primary" name="descripcion" onChange={() => {setSent(false)}}></textarea>
             </div>
             
             <div className="w-full md:w-1/2 px-3">
@@ -74,14 +77,21 @@ export default function NuevoAviso() {
           </div>
           <div className="flex flex-wrap -mx-3 mb-6">
             <div className="w-full px-3">
+
+              {sending ? (
+              <button className="btn btn-primary text-white mt-5" disabled>
+                <span className="loading loading-spinner text-secondary"></span>
+              </button>
+              ) : (
               <button className="btn btn-primary text-white mt-5" type="submit">
                 Crear aviso
               </button>
+              )}
             </div>
             {sent && (
               <div className="toast m-20">
                 <div className="alert alert-success">
-                  <span>Aviso creado exitosamente</span>
+                    <span>Aviso creado exitosamente</span>
                 </div>
               </div>
             )}

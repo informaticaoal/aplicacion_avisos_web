@@ -16,11 +16,12 @@ export default function Home() {
       <Navbar />
       <main className="container mx-auto mt-10">
         <SignedIn>
-          <div className='grid grid-cols-[25%_auto] gap-32 align-top'>
+          <div className='grid grid-cols-[30%_auto] gap-28 align-top sm-justify-center lg-justify-start'>
             <div>
-              <h1 className="text-3xl font-bold mb-4">Bienvenid@ a la Aplicación de Avisos</h1>
+              <h1 className="text-3xl font-bold mb-4">Bienvenid@ a la Aplicación de Avisos de OAL Huétor Tájar</h1>
               <p className="text-lg">
-                ¡Hola, {user?.email}!{' '}
+                ¡Hola, {user?.email}!</p>
+              <p className='text-lg'>
                 {new Date().getHours() >= 12
                   ? '¿Cómo te está yendo la tarde?'
                   : '¡Con buena energía por la mañana!'}{' '}

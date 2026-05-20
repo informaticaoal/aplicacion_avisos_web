@@ -54,7 +54,7 @@ export default function NuevoAviso() {
       <Navbar />
       <main className="bg-base-100 container mx-auto mt-10">
         <h1 className="text-4xl font-bold mb-10">Creación de avisos</h1>
-        <form onSubmit={handleSubmit} className="w-full max-w-lg">
+        <form onSubmit={handleSubmit}>
           <div className="flex flex-wrap -mx-3 mb-6">
             <div className="w-full md:w-1/2 px-3">
               <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">

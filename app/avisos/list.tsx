@@ -2,6 +2,7 @@ import { collection, deleteDoc, doc, getDocs, getFirestore, orderBy, query } fro
 import { Storage } from "appwrite";
 import { client } from "@/app/appwrite";
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 
 function renderAdjunto(aviso: { id: string; [key: string]: any }) {
   if (!aviso.urlAdjunto) return null;
@@ -24,8 +25,11 @@ export default function List() {
     const db = getFirestore();
     const envBucketId: string = process.env.NEXT_PUBLIC_BUCKET_ID ?? '';
     const storage = new Storage(client);
+    const router = useRouter();
     const [avisos, setAvisos] = useState<Array<{id: string; [key: string]: any}>>([]);
     const [currentPage, setCurrentPage] = useState(1);
+    const [avisoAEliminar, setAvisoAEliminar] = useState<{id: string; [key: string]: any} | null>(null);
+    const [eliminando, setEliminando] = useState(false);
     const avisosPerPage = 8;
 
     const indexOfLastAviso = currentPage * avisosPerPage;
@@ -68,6 +72,24 @@ export default function List() {
         fetchAvisos();
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
+
+    async function handleDelete() {
+        if (!avisoAEliminar) return;
+        setEliminando(true);
+        try {
+            await deleteDoc(doc(db, "avisos", avisoAEliminar.id));
+            if (avisoAEliminar.adjuntoId) {
+                await storage.deleteFile(envBucketId, avisoAEliminar.adjuntoId);
+            }
+            await fetchAvisos();
+        } catch (error) {
+            console.error("Error al eliminar el aviso: ", error);
+        } finally {
+            setEliminando(false);
+            setAvisoAEliminar(null);
+            (document.getElementById('modal_confirmar_eliminar') as HTMLDialogElement)?.close();
+        }
+    }
   const totalPages = Math.ceil(avisos.length / avisosPerPage);
 
   return (
@@ -79,16 +101,33 @@ export default function List() {
             <div className="card-body">
                 <h2 className="card-title">{aviso.descripcion}</h2>
                 <p>Fecha de creación: {new Date(aviso.fechaCreacion).getDate()}/{new Date(aviso.fechaCreacion).getMonth() + 1}/{new Date(aviso.fechaCreacion).getFullYear()} — {new Date(aviso.fechaCreacion).getHours() >= 10 ? new Date(aviso.fechaCreacion).getHours() : '0' + new Date(aviso.fechaCreacion).getHours()}:{new Date(aviso.fechaCreacion).getMinutes().toString().padStart(2, '0')}</p>
-                <div className="card-actions justify-end">
-                {aviso.nivelUrgencia === "Leve" ? (
-                  <button className="btn btn-sm btn-primary">Leve</button>  
-                ): aviso.nivelUrgencia === "Moderado" ? (
-                  <button className="btn btn-sm btn-warning">Moderado</button>  
-                ) : aviso.nivelUrgencia === "Alto" ? (
-                  <button className="btn btn-sm btn-secondary">Alto</button>
-                ) : (
-                    <button className="btn btn-sm btn-error">Grave</button>
-                )}
+                <div className="card-actions justify-between items-center mt-2">
+                  <div>
+                  {aviso.nivelUrgencia === "Leve" ? (
+                    <button className="btn btn-sm btn-primary">Leve</button>  
+                  ): aviso.nivelUrgencia === "Moderado" ? (
+                    <button className="btn btn-sm btn-warning">Moderado</button>  
+                  ) : aviso.nivelUrgencia === "Alto" ? (
+                    <button className="btn btn-sm btn-secondary">Alto</button>
+                  ) : (
+                      <button className="btn btn-sm btn-error">Grave</button>
+                  )}
+                  </div>
+                  <div className="flex gap-1">
+                    <button
+                      className="btn btn-sm btn-ghost text-lg"
+                      onClick={() => router.push(`/avisos/${aviso.id}/editar`)}
+                      aria-label="Editar aviso"
+                    >✏️</button>
+                    <button
+                      className="btn btn-sm btn-ghost text-error text-lg"
+                      aria-label="Eliminar aviso"
+                      onClick={() => {
+                        setAvisoAEliminar(aviso);
+                        (document.getElementById('modal_confirmar_eliminar') as HTMLDialogElement)?.showModal();
+                      }}
+                    >🗑️</button>
+                  </div>
                 </div>
                 <div>
                     {renderAdjunto(aviso)}
@@ -98,8 +137,27 @@ export default function List() {
       ))
       : (<p>No hay avisos disponibles.</p>)}
       </div>
+      <dialog id="modal_confirmar_eliminar" className="modal">
+        <div className="modal-box">
+          <h3 className="font-bold text-lg">Confirmar eliminación</h3>
+          <p className="py-4">¿Estás seguro de que quieres eliminar este aviso? Esta acción no se puede deshacer.</p>
+          <div className="modal-action">
+            <button
+              className="btn btn-error"
+              onClick={handleDelete}
+              disabled={eliminando}
+            >
+              {eliminando ? <span className="loading loading-spinner"></span> : 'Eliminar'}
+            </button>
+            <form method="dialog">
+              <button className="btn btn-ghost" disabled={eliminando}>Cancelar</button>
+            </form>
+          </div>
+        </div>
+        <form method="dialog" className="modal-backdrop"><button>cerrar</button></form>
+      </dialog>
       {totalPages > 1 && (
-        <div className="join mt-6 flex justify-center">
+        <div className="join my-10 flex justify-center">
           <button
             className="join-item btn"
             onClick={() => setCurrentPage(p => Math.max(p - 1, 1))}

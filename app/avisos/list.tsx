@@ -3,6 +3,7 @@ import { Storage } from "appwrite";
 import { client } from "@/app/appwrite";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { PaperClipIcon, PencilSquareIcon, TrashIcon } from "@heroicons/react/24/outline";
 
 function renderAdjunto(aviso: { id: string; [key: string]: any }) {
   if (!aviso.urlAdjunto) return null;
@@ -13,9 +14,10 @@ function renderAdjunto(aviso: { id: string; [key: string]: any }) {
       href={aviso.urlAdjunto}
       target="_blank"
       rel="noopener noreferrer"
-      className="btn btn-sm btn-outline mt-2 w-full justify-start truncate"
+      className="btn btn-sm btn-outline mt-2 w-full justify-start"
     >
-      📎 {nombre}
+      <PaperClipIcon className="h-4 w-4" />
+      <span className="truncate">{nombre}</span>
     </a>
   );
 }
@@ -115,10 +117,12 @@ export default function List() {
                   </div>
                   <div className="flex gap-1">
                     <button
-                      className="btn btn-sm btn-ghost text-lg"
+                      className="btn btn-sm btn-ghost text-info text-lg"
                       onClick={() => router.push(`/avisos/${aviso.id}/editar`)}
                       aria-label="Editar aviso"
-                    >✏️</button>
+                    >
+                      <PencilSquareIcon className="h-5 w-5" />
+                    </button>
                     <button
                       className="btn btn-sm btn-ghost text-error text-lg"
                       aria-label="Eliminar aviso"
@@ -126,7 +130,9 @@ export default function List() {
                         setAvisoAEliminar(aviso);
                         (document.getElementById('modal_confirmar_eliminar') as HTMLDialogElement)?.showModal();
                       }}
-                    >🗑️</button>
+                    >
+                      <TrashIcon className="h-5 w-5" />
+                    </button>
                   </div>
                 </div>
                 <div>

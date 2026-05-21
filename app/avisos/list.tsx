@@ -1,9 +1,29 @@
 import { collection, deleteDoc, doc, getDocs, getFirestore, orderBy, query } from "firebase/firestore";
+import { Storage } from "appwrite";
+import { client } from "@/app/appwrite";
 import { useEffect, useState } from "react";
+
+function renderAdjunto(aviso: { id: string; [key: string]: any }) {
+  if (!aviso.urlAdjunto) return null;
+  const nombre: string = aviso.nombreAdjunto ?? 'Adjunto';
+
+  return (
+    <a
+      href={aviso.urlAdjunto}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="btn btn-sm btn-outline mt-2 w-full justify-start truncate"
+    >
+      📎 {nombre}
+    </a>
+  );
+}
 
 export default function List() {
 
     const db = getFirestore();
+    const envBucketId: string = process.env.NEXT_PUBLIC_BUCKET_ID ?? '';
+    const storage = new Storage(client);
     const [avisos, setAvisos] = useState<Array<{id: string; [key: string]: any}>>([]);
     const [currentPage, setCurrentPage] = useState(1);
     const avisosPerPage = 8;
@@ -31,7 +51,9 @@ export default function List() {
             collectedData.forEach(async (aviso) => {
                 if (now - aviso.fechaCreacion >= 365 * 24 * 60 * 60 * 1000) { // Si el aviso tiene más de 1 año
                     await deleteDoc(doc(db, "avisos", aviso.id));
-                    
+                    if (aviso.adjuntoId) {
+                        await storage.deleteFile(envBucketId, aviso.adjuntoId);
+                    }
                 }
             });
             setAvisos(collectedData.filter(aviso => now - aviso.fechaCreacion < 365 * 24 * 60 * 60 * 1000)); // Actualiza el estado para mostrar solo los avisos recientes
@@ -67,6 +89,9 @@ export default function List() {
                 ) : (
                     <button className="btn btn-sm btn-error">Grave</button>
                 )}
+                </div>
+                <div>
+                    {renderAdjunto(aviso)}
                 </div>
             </div>
         </div>

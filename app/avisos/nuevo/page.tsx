@@ -1,36 +1,60 @@
 'use client';
 import Navbar from "@/app/components/layouts/Navbar";
 import { addDoc, collection, getFirestore } from "firebase/firestore";
-import { FormEvent, useState } from "react";
+import { FormEvent, useRef, useState } from "react";
+import { Storage, ID } from "appwrite";
+import { client } from "@/app/appwrite";
 
 export default function NuevoAviso() {
   const db = getFirestore();
+  const envBucketId: string = process.env.NEXT_PUBLIC_BUCKET_ID ?? '';
+  const storage = new Storage(client);
 
   const [sent, setSent] = useState(false);
   const [sending, setSending] = useState(false);
+  const [file, setFile] = useState<File | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   async function addAlert(dataDescription: string, dataCategory: string) {
+    let urlAdjunto: string | null = null;
+    let nombreAdjunto: string | null = null;
+    let uploadedFileId: string | null = null;
+
     try {
-      const docRef = await addDoc(collection(db, "avisos"), {
+      if (file) {
+        const response = await storage.createFile({
+          bucketId: envBucketId,
+          fileId: ID.unique(),
+          file,
+        });
+        uploadedFileId = response.$id;
+        urlAdjunto = storage.getFileView(envBucketId, response.$id).toString();
+        nombreAdjunto = file.name;
+      }
+
+      await addDoc(collection(db, "avisos"), {
         descripcion: dataDescription,
         nivelUrgencia: dataCategory,
         fechaCreacion: new Date().getTime(),
         sincronizado: true,
-        urlFoto: null,
+        urlAdjunto,
+        nombreAdjunto,
+        adjuntoId: uploadedFileId,
       });
 
       await fetch("/api/fcm", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          heading: "Nuevo aviso",
+          heading: "Nuevo aviso: " + dataCategory,
           content: dataDescription,
           urgency: dataCategory,
         }),
       });
     } catch (error) {
+      if (uploadedFileId) {
+        await storage.deleteFile(envBucketId, uploadedFileId);
+      }
       console.error("Error al agregar el aviso o enviar la notificación: ", error);
       throw error;
     }
@@ -46,6 +70,8 @@ export default function NuevoAviso() {
     await addAlert(dataDescription, dataCategory);
     setSent(true);
     setSending(false);
+    setFile(null);
+    if (fileInputRef.current) fileInputRef.current.value = '';
     currentForm.reset();
   };
 
@@ -73,6 +99,22 @@ export default function NuevoAviso() {
                 <input className="join-item btn btn-secondary btn-outline" type="radio" name="options" aria-label="Alto" value='Alto'/>
                 <input className="join-item btn btn-error btn-outline" type="radio" name="options" aria-label="Grave" value='Grave'/>
               </div>
+            </div>
+          </div>
+          <div className="flex flex-wrap -mx-3 mb-6">
+            <div className="w-full px-3">
+              <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">
+                Adjunto (opcional)
+              </label>
+              <input
+                ref={fileInputRef}
+                type="file"
+                className="file-input file-input-primary w-full max-w-xs"
+                onChange={(e) => { setFile(e.target.files?.[0] ?? null); setSent(false); }}
+              />
+              {file && (
+                <p className="text-sm mt-1 text-base-content/60">{file.name} ({(file.size / 1024).toFixed(1)} KB)</p>
+              )}
             </div>
           </div>
           <div className="flex flex-wrap -mx-3 mb-6">

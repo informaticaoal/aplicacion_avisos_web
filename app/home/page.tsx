@@ -27,7 +27,7 @@ export default function Home() {
                   : '¡Con buena energía por la mañana!'}{' '}
               </p>
               <Link href="/avisos/nuevo" className="btn btn-primary text-white mt-5">
-                Añadir aviso
+                Crear aviso
               </Link>
             </div>
             <div>

@@ -1,6 +1,4 @@
 import { collection, deleteDoc, doc, getDocs, getFirestore, orderBy, query } from "firebase/firestore";
-import { Storage } from "appwrite";
-import { client } from "@/app/appwrite";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { PaperClipIcon, PencilSquareIcon, TrashIcon } from "@heroicons/react/24/outline";
@@ -25,8 +23,6 @@ function renderAdjunto(aviso: { id: string; [key: string]: any }) {
 export default function List() {
 
     const db = getFirestore();
-    const envBucketId: string = process.env.NEXT_PUBLIC_BUCKET_ID ?? '';
-    const storage = new Storage(client);
     const router = useRouter();
     const [avisos, setAvisos] = useState<Array<{id: string; [key: string]: any}>>([]);
     const [currentPage, setCurrentPage] = useState(1);
@@ -58,7 +54,11 @@ export default function List() {
                 if (now - aviso.fechaCreacion >= 365 * 24 * 60 * 60 * 1000) { // Si el aviso tiene más de 1 año
                     await deleteDoc(doc(db, "avisos", aviso.id));
                     if (aviso.adjuntoId) {
-                        await storage.deleteFile(envBucketId, aviso.adjuntoId);
+                        await fetch('/api/appwrite/delete-file', {
+                            method: 'DELETE',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ fileId: aviso.adjuntoId }),
+                        });
                     }
                 }
             });
@@ -81,7 +81,11 @@ export default function List() {
         try {
             await deleteDoc(doc(db, "avisos", avisoAEliminar.id));
             if (avisoAEliminar.adjuntoId) {
-                await storage.deleteFile(envBucketId, avisoAEliminar.adjuntoId);
+                await fetch('/api/appwrite/delete-file', {
+                    method: 'DELETE',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ fileId: avisoAEliminar.adjuntoId }),
+                });
             }
             await fetchAvisos();
         } catch (error) {
@@ -102,7 +106,11 @@ export default function List() {
         <div className="card card-border bg-base-100 w-100 my-2" key={aviso.id}>
             <div className="card-body">
                 <h2 className="card-title">{aviso.descripcion}</h2>
-                <p>Fecha de creación: {new Date(aviso.fechaCreacion).getDate()}/{new Date(aviso.fechaCreacion).getMonth() + 1}/{new Date(aviso.fechaCreacion).getFullYear()} — {new Date(aviso.fechaCreacion).getHours() >= 10 ? new Date(aviso.fechaCreacion).getHours() : '0' + new Date(aviso.fechaCreacion).getHours()}:{new Date(aviso.fechaCreacion).getMinutes().toString().padStart(2, '0')}</p>
+                <p>Fecha de creación: {new Date(aviso.fechaCreacion).getDate()}/
+                  {new Date(aviso.fechaCreacion).getMonth() + 1}/{new Date(aviso.fechaCreacion).getFullYear()} — 
+                  {new Date(aviso.fechaCreacion).getHours() >= 10 ? new Date(aviso.fechaCreacion).getHours() : 
+                  '0' + new Date(aviso.fechaCreacion).getHours()}:
+                  {new Date(aviso.fechaCreacion).getMinutes().toString().padStart(2, '0')}</p>
                 <div className="card-actions justify-between items-center mt-2">
                   <div>
                   {aviso.nivelUrgencia === "Leve" ? (

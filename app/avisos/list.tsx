@@ -12,7 +12,7 @@ function renderAdjunto(aviso: { id: string; [key: string]: any }) {
       href={aviso.urlAdjunto}
       target="_blank"
       rel="noopener noreferrer"
-      className="btn btn-sm btn-outline mt-2 w-full justify-start"
+      className="btn btn-sm bg-base-100 btn-outline mt-2 w-full justify-start"
     >
       <PaperClipIcon className="h-4 w-4" />
       <span className="truncate">{nombre}</span>
@@ -103,7 +103,7 @@ export default function List() {
       <h1 className="text-3xl font-bold mb-5">Listado de Avisos</h1>
       <div className="grid grid-cols-2">
         {currentAvisos && currentAvisos.length > 0 ? currentAvisos.map(aviso => (
-        <div className="card card-border bg-base-100 w-100 my-2" key={aviso.id}>
+        <div className="card card-border bg-primary/7 w-100 my-2" key={aviso.id}>
             <div className="card-body">
                 <h2 className="card-title">{aviso.descripcion}</h2>
                 <p>Fecha de creación: {new Date(aviso.fechaCreacion).getDate()}/
@@ -111,6 +111,9 @@ export default function List() {
                   {new Date(aviso.fechaCreacion).getHours() >= 10 ? new Date(aviso.fechaCreacion).getHours() : 
                   '0' + new Date(aviso.fechaCreacion).getHours()}:
                   {new Date(aviso.fechaCreacion).getMinutes().toString().padStart(2, '0')}</p>
+                <div className="my-1">
+                    {renderAdjunto(aviso)}
+                </div>
                 <div className="card-actions justify-between items-center mt-2">
                   <div>
                   {aviso.nivelUrgencia === "Leve" ? (
@@ -142,9 +145,6 @@ export default function List() {
                       <TrashIcon className="h-5 w-5" />
                     </button>
                   </div>
-                </div>
-                <div>
-                    {renderAdjunto(aviso)}
                 </div>
             </div>
         </div>

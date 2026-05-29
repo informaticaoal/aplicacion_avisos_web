@@ -1,10 +1,10 @@
 'use client';
-import Navbar from "@/app/components/layouts/Navbar";
-import { doc, getDoc, getFirestore, updateDoc } from "firebase/firestore";
-import { FormEvent, use, useEffect, useRef, useState } from "react";
-import { Storage, ID } from "appwrite";
-import { client } from "@/app/appwrite";
-import { useRouter } from "next/navigation";
+import Navbar from '@/app/components/layouts/Navbar';
+import { doc, getDoc, getFirestore, updateDoc } from 'firebase/firestore';
+import { FormEvent, use, useEffect, useRef, useState } from 'react';
+import { Storage, ID } from 'appwrite';
+import { client } from '@/app/appwrite';
+import { useRouter } from 'next/navigation';
 
 type AvisoData = {
   descripcion: string;
@@ -32,7 +32,7 @@ export default function EditarAviso({ params }: { params: Promise<{ id: string }
   useEffect(() => {
     async function fetchAviso() {
       try {
-        const docRef = doc(db, "avisos", id);
+        const docRef = doc(db, 'avisos', id);
         const docSnap = await getDoc(docRef);
         if (docSnap.exists()) {
           const data = docSnap.data();
@@ -45,21 +45,21 @@ export default function EditarAviso({ params }: { params: Promise<{ id: string }
           });
         }
       } catch (error) {
-        console.error("Error al obtener el aviso: ", error);
+        console.error('Error al obtener el aviso: ', error);
       } finally {
         setLoading(false);
       }
     }
     fetchAviso();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (!aviso) return;
     const formData = new FormData(event.currentTarget);
-    const dataDescription = String(formData.get("descripcion") ?? "");
-    const dataCategory = String(formData.get("options") ?? aviso.nivelUrgencia);
+    const dataDescription = String(formData.get('descripcion') ?? '');
+    const dataCategory = String(formData.get('options') ?? aviso.nivelUrgencia);
     setSaving(true);
 
     let urlAdjunto = aviso.urlAdjunto;
@@ -88,7 +88,7 @@ export default function EditarAviso({ params }: { params: Promise<{ id: string }
         adjuntoId = null;
       }
 
-      await updateDoc(doc(db, "avisos", id), {
+      await updateDoc(doc(db, 'avisos', id), {
         descripcion: dataDescription,
         nivelUrgencia: dataCategory,
         urlAdjunto,
@@ -102,29 +102,31 @@ export default function EditarAviso({ params }: { params: Promise<{ id: string }
       if (newUploadedFileId) {
         await storage.deleteFile(envBucketId, newUploadedFileId);
       }
-      console.error("Error al actualizar el aviso: ", error);
+      console.error('Error al actualizar el aviso: ', error);
     } finally {
       setSaving(false);
     }
   }
 
-  if (loading) return (
-    <>
-      <Navbar />
-      <main className="bg-base-100 container mx-auto mt-10 flex justify-center">
-        <span className="loading loading-spinner loading-lg"></span>
-      </main>
-    </>
-  );
+  if (loading)
+    return (
+      <>
+        <Navbar />
+        <main className="bg-base-100 container mx-auto mt-10 flex justify-center">
+          <span className="loading loading-spinner loading-lg"></span>
+        </main>
+      </>
+    );
 
-  if (!aviso) return (
-    <>
-      <Navbar />
-      <main className="bg-base-100 container mx-auto mt-10">
-        <p>Aviso no encontrado.</p>
-      </main>
-    </>
-  );
+  if (!aviso)
+    return (
+      <>
+        <Navbar />
+        <main className="bg-base-100 container mx-auto mt-10">
+          <p>Aviso no encontrado.</p>
+        </main>
+      </>
+    );
 
   return (
     <>
@@ -151,10 +153,38 @@ export default function EditarAviso({ params }: { params: Promise<{ id: string }
                 Categoria del aviso
               </label>
               <div className="join mt-2">
-                <input className="join-item btn btn-primary btn-outline" type="radio" name="options" aria-label="Leve" value="Leve" defaultChecked={aviso.nivelUrgencia === 'Leve'} />
-                <input className="join-item btn btn-warning btn-outline" type="radio" name="options" aria-label="Moderado" value="Moderado" defaultChecked={aviso.nivelUrgencia === 'Moderado'} />
-                <input className="join-item btn btn-secondary btn-outline" type="radio" name="options" aria-label="Alto" value="Alto" defaultChecked={aviso.nivelUrgencia === 'Alto'} />
-                <input className="join-item btn btn-error btn-outline" type="radio" name="options" aria-label="Grave" value="Grave" defaultChecked={aviso.nivelUrgencia === 'Grave'} />
+                <input
+                  className="join-item btn btn-primary btn-outline"
+                  type="radio"
+                  name="options"
+                  aria-label="Leve"
+                  value="Leve"
+                  defaultChecked={aviso.nivelUrgencia === 'Leve'}
+                />
+                <input
+                  className="join-item btn btn-warning btn-outline"
+                  type="radio"
+                  name="options"
+                  aria-label="Moderado"
+                  value="Moderado"
+                  defaultChecked={aviso.nivelUrgencia === 'Moderado'}
+                />
+                <input
+                  className="join-item btn btn-secondary btn-outline"
+                  type="radio"
+                  name="options"
+                  aria-label="Alto"
+                  value="Alto"
+                  defaultChecked={aviso.nivelUrgencia === 'Alto'}
+                />
+                <input
+                  className="join-item btn btn-error btn-outline"
+                  type="radio"
+                  name="options"
+                  aria-label="Grave"
+                  value="Grave"
+                  defaultChecked={aviso.nivelUrgencia === 'Grave'}
+                />
               </div>
             </div>
           </div>
@@ -167,7 +197,12 @@ export default function EditarAviso({ params }: { params: Promise<{ id: string }
 
               {aviso.adjuntoId && !eliminarAdjunto && !nuevoArchivo && (
                 <div className="flex items-center gap-3 mb-3">
-                  <a href={aviso.urlAdjunto!} target="_blank" rel="noopener noreferrer" className="btn btn-sm btn-outline">
+                  <a
+                    href={aviso.urlAdjunto!}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="btn btn-sm btn-outline"
+                  >
                     📎 {aviso.nombreAdjunto}
                   </a>
                   <button

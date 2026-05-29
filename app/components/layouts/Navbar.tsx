@@ -16,7 +16,10 @@ export default function Navbar() {
   return (
     <nav className="navbar bg-blue-50 shadow-sm">
       <div className="flex-1">
-        <Link href="/" className="text-xl ml-10 font-bold text-primary hover:text-[1.4rem] transition-all duration-300">
+        <Link
+          href="/"
+          className="text-xl ml-10 font-bold text-primary hover:text-[1.4rem] transition-all duration-300"
+        >
           Aplicación de Avisos <span className="text-neutral">O</span>
           <span className="text-secondary">A</span>
           <span className="text-black">L</span>

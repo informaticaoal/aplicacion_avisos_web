@@ -6,7 +6,6 @@ import { auth } from '../../firebase/firebase.config';
 import Link from 'next/link';
 import Navbar from '../components/layouts/Navbar';
 
-
 export default function Login() {
   const router = useRouter();
   const [signInUserWithEmailAndPassword] = useSignInWithEmailAndPassword(auth);

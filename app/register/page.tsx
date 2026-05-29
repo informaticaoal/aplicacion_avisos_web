@@ -31,7 +31,7 @@ export default function Register() {
         role: 'user',
       });
     } catch (error) {
-      console.error("Error al agregar el usuario en la base de datos: ", error);
+      console.error('Error al agregar el usuario en la base de datos: ', error);
     }
   }
 
@@ -55,7 +55,7 @@ export default function Register() {
 
   return (
     <>
-    <Navbar />
+      <Navbar />
       <div className="hero bg-base-200 min-h-screen">
         <div className="card bg-base-100 w-full max-w-sm shrink-0 shadow-2xl">
           <form className="card-body" onSubmit={handleSubmit}>

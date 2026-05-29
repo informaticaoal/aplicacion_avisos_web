@@ -6,10 +6,7 @@ export async function POST(req: Request) {
   const { heading, content, urgency } = body;
 
   if (!heading || !content) {
-    return NextResponse.json(
-      { error: 'heading and content are required' },
-      { status: 400 }
-    );
+    return NextResponse.json({ error: 'heading and content are required' }, { status: 400 });
   }
 
   try {
@@ -35,9 +32,6 @@ export async function POST(req: Request) {
     return NextResponse.json({ messageId });
   } catch (error) {
     console.error('Error al enviar la notificación FCM:', error);
-    return NextResponse.json(
-      { error: 'Error al enviar la notificación' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Error al enviar la notificación' }, { status: 500 });
   }
 }

@@ -7,9 +7,5 @@ import { auth } from '@/firebase/firebase.config';
 export default function Index() {
   const [user] = useAuthState(auth); // Simulación de estado de autenticación
 
-  return (
-    <>
-      {user && !user.isAnonymous ? <Home /> : <Login />}
-    </>
-  );
+  return <>{user && !user.isAnonymous ? <Home /> : <Login />}</>;
 }

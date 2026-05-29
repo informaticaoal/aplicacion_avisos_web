@@ -28,7 +28,7 @@ export default function Login() {
 
   return (
     <>
-    <Navbar />
+      <Navbar />
       <div className="hero bg-base-200 min-h-screen">
         <div className="card bg-base-100 w-full max-w-sm shrink-0 shadow-2xl">
           <form className="card-body" onSubmit={handleSubmit}>

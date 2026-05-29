@@ -39,13 +39,13 @@ export default function Register() {
     e.preventDefault();
     try {
       setSendingData(true);
-        const userCredential = await createUser(email, password);
-        if (userCredential) {
-            const userEmail = userCredential.user.email;
-            await addData(userEmail);
-        }
+      const userCredential = await createUser(email, password);
+      if (userCredential) {
+        const userEmail = userCredential.user.email;
+        await addData(userEmail);
+      }
     } catch (error) {
-        console.error('Error al crear el usuario:', error);
+      console.error('Error al crear el usuario:', error);
     } finally {
       await sendEmailVerification();
       setSendingData(false);

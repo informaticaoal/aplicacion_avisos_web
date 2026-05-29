@@ -86,18 +86,50 @@ export default function NuevoAviso() {
               <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">
                 Descripción del aviso
               </label>
-              <textarea rows={5} placeholder="Detalles del aviso" className="textarea textarea-primary" name="descripcion" onChange={() => {setSent(false)}}></textarea>
+              <textarea
+                rows={5}
+                placeholder="Detalles del aviso"
+                className="textarea textarea-primary"
+                name="descripcion"
+                onChange={() => {
+                  setSent(false);
+                }}
+              ></textarea>
             </div>
-            
+
             <div className="w-full md:w-1/2 px-3">
               <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold">
                 Categoria del aviso
               </label>
               <div className="join mt-2">
-                <input className="join-item btn btn-primary btn-outline" type="radio" name="options" aria-label="Leve" value='Leve'/>
-                <input className="join-item btn btn-warning btn-outline" type="radio" name="options" aria-label="Moderado" value='Moderado'/>
-                <input className="join-item btn btn-secondary btn-outline" type="radio" name="options" aria-label="Alto" value='Alto'/>
-                <input className="join-item btn btn-error btn-outline" type="radio" name="options" aria-label="Grave" value='Grave'/>
+                <input
+                  className="join-item btn btn-primary btn-outline"
+                  type="radio"
+                  name="options"
+                  aria-label="Leve"
+                  value="Leve"
+                />
+                <input
+                  className="join-item btn btn-warning btn-outline"
+                  type="radio"
+                  name="options"
+                  aria-label="Moderado"
+                  value="Moderado"
+                />
+                <input
+                  className="join-item btn btn-secondary btn-outline"
+                  type="radio"
+                  name="options"
+                  aria-label="Alto"
+                  value="Alto"
+                />
+                <input
+                  className="join-item btn btn-error btn-outline"
+                  type="radio"
+                  name="options"
+                  aria-label="Grave"
+                  value="Grave"
+                />
               </div>
             </div>
           </div>
@@ -110,30 +142,34 @@ export default function NuevoAviso() {
                 ref={fileInputRef}
                 type="file"
                 className="file-input file-input-primary w-full max-w-xs"
-                onChange={(e) => { setFile(e.target.files?.[0] ?? null); setSent(false); }}
+                onChange={(e) => {
+                  setFile(e.target.files?.[0] ?? null);
+                  setSent(false);
+                }}
               />
               {file && (
-                <p className="text-sm mt-1 text-base-content/60">{file.name} ({(file.size / 1024).toFixed(1)} KB)</p>
+                <p className="text-sm mt-1 text-base-content/60">
+                  {file.name} ({(file.size / 1024).toFixed(1)} KB)
+                </p>
               )}
             </div>
           </div>
           <div className="flex flex-wrap -mx-3 mb-6">
             <div className="w-full px-3">
-
               {sending ? (
-              <button className="btn btn-primary text-white mt-5" disabled>
-                <span className="loading loading-spinner text-secondary"></span>
-              </button>
+                <button className="btn btn-primary text-white mt-5" disabled>
+                  <span className="loading loading-spinner text-secondary"></span>
+                </button>
               ) : (
-              <button className="btn btn-primary text-white mt-5" type="submit">
-                Crear aviso
-              </button>
+                <button className="btn btn-primary text-white mt-5" type="submit">
+                  Crear aviso
+                </button>
               )}
             </div>
             {sent && (
               <div className="toast m-20">
                 <div className="alert alert-success">
-                    <span>Aviso creado exitosamente</span>
+                  <span>Aviso creado exitosamente</span>
                 </div>
               </div>
             )}

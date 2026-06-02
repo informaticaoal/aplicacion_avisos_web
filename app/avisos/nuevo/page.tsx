@@ -22,6 +22,10 @@ export default function NuevoAviso() {
 
     try {
       if (file) {
+        if (file.size >= 50 * 1024 * 1024) {
+          alert("El archivo es demasiado grande. El tamaño máximo permitido es de 50 MB.");
+          return;
+        }
         const response = await storage.createFile({
           bucketId: envBucketId,
           fileId: ID.unique(),

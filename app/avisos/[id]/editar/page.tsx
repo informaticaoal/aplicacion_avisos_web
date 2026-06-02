@@ -79,10 +79,18 @@ export default function EditarAviso({ params }: { params: Promise<{ id: string }
         nombreAdjunto = nuevoArchivo.name;
         adjuntoId = response.$id;
         if (aviso.adjuntoId) {
-          await storage.deleteFile(envBucketId, aviso.adjuntoId);
+          await fetch('/api/appwrite/delete-file', {
+            method: 'DELETE',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ fileId: aviso.adjuntoId }),
+          });
         }
       } else if (eliminarAdjunto && aviso.adjuntoId) {
-        await storage.deleteFile(envBucketId, aviso.adjuntoId);
+        await fetch('/api/appwrite/delete-file', {
+          method: 'DELETE',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ fileId: aviso.adjuntoId }),
+        });
         urlAdjunto = null;
         nombreAdjunto = null;
         adjuntoId = null;
@@ -100,7 +108,11 @@ export default function EditarAviso({ params }: { params: Promise<{ id: string }
       setTimeout(() => router.back(), 1500);
     } catch (error) {
       if (newUploadedFileId) {
-        await storage.deleteFile(envBucketId, newUploadedFileId);
+        await fetch('/api/appwrite/delete-file', {
+          method: 'DELETE',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ fileId: newUploadedFileId }),
+        });
       }
       console.error('Error al actualizar el aviso: ', error);
     } finally {
